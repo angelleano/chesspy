@@ -160,7 +160,10 @@ cython_debug/
 #.idea/
 
 # Pygame
-*pygame/*
+*pygame/
 
 # Windows venv
-*Scripts/*
+*Scripts/
+
+# Custom Tests
+Tests/
