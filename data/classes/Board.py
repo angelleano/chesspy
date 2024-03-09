@@ -9,6 +9,36 @@ from data.classes.pieces.Pawn import Pawn
 from data.classes.pieces.Queen import Queen
 from data.classes.pieces.Rook import Rook
 
+# Gets available positions between 2 positions connected in straight line
+def get_coordinates_between(start, end):
+    
+    start_x, start_y = start
+    end_x, end_y = end
+
+    # Calculate the direction of the line
+    dx = end_x - start_x
+    dy = end_y - start_y
+    
+    # Ensure that the line is diagonal or horizontal/vertical
+    if abs(dx) != abs(dy) and dx != 0 and dy != 0:
+        return None
+    
+    # Determine the step size for x and y
+    step_x = 1 if dx > 0 else -1 if dx < 0 else 0
+    step_y = 1 if dy > 0 else -1 if dy < 0 else 0
+    
+    coordinates = []
+    start_x += step_x
+    start_y += step_y
+    x, y = start_x, start_y
+    
+    while x != end_x or y != end_y:
+        coordinates.append((x, y))
+        x += step_x
+        y += step_y
+    
+    return coordinates
+
 # Game state checker
 class Board:
     def __init__(self, width, height):
@@ -93,12 +123,29 @@ class Board:
             if clicked_square.occupying_piece.color == self.turn:
                 self.selected_piece = clicked_square.occupying_piece
 
-    def get_agro_agents(self, target): # target = (x, y)
-        # All pieces and their valid moves
+    def can_block(self, start, end): # (start, end) = ((x1, y1), (x2, y2))
+        attack_line = get_coordinates_between(start, end)
+        if attack_line == None:
+            return False
+        
         pos_scope = {
             square.occupying_piece: [move.pos for move in square.occupying_piece.get_moves(self)] 
             for square in self.squares 
             if square.occupying_piece is not None and len(square.occupying_piece.get_moves(self)) > 0
+            }
+
+        for atpos in attack_line:
+            for scope in pos_scope.values():
+                if atpos in scope:
+                    return True
+        return False
+
+    def get_agro_agents(self, target): # target = (x, y)
+        # All pieces and their valid moves
+        pos_scope = {
+            square.occupying_piece: [move.pos for move in square.occupying_piece.get_valid_moves(self)] 
+            for square in self.squares 
+            if square.occupying_piece is not None and len(square.occupying_piece.get_valid_moves(self)) > 0
             }
         possible_attackers = []
 
@@ -144,8 +191,6 @@ class Board:
             if piece.color != color:
                 for square in piece.attacking_squares(self):
                     if square.pos == king_pos:
-                        # DELETE THIS PRINT FOR PROD
-                        print(f"Color is: {color}\nAttacking Piece is: {piece.pos}")
                         output = True
         if board_change is not None:
             old_square.occupying_piece = changing_piece
@@ -160,14 +205,14 @@ class Board:
                     king = piece
         if king.get_valid_moves(self) == []:
             if self.is_in_check(color):
-                    # CHECK IF PIECE IS ROOK, QUEEN 
-                    # OR BISHOP CAN IT BE BLOCKED
                 aggresors = self.get_agro_agents(king.pos)
                 if len(aggresors) == 1:
                     if len(self.get_agro_agents(aggresors[0].pos)) > 0:
                         pass
-                    else:
+                    elif not self.can_block(aggresors[0].pos, king.pos):
                         output = True
+                else:
+                    output = True
         return output
     
     def draw(self, display):
