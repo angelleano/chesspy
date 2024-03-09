@@ -35,6 +35,12 @@ if __name__ == "__main__":
         elif board.is_in_checkmate("white"): # If white is in checkmate
             print("Black wins!")
             running = False
-        
+        elif board.turn == "black" and not board.can_move("black"): # If black is in stalemate
+            print("Stalemate!")
+            running = False
+        elif board.turn == "white" and not board.can_move("white"): # if white is in stalemate
+            print("Stalemate!")
+            running = False
+
         # Draw the board
         draw(screen)
