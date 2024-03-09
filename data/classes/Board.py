@@ -93,6 +93,25 @@ class Board:
             if clicked_square.occupying_piece.color == self.turn:
                 self.selected_piece = clicked_square.occupying_piece
 
+    def get_agro_agents(self, target): # target = (x, y)
+        # All pieces and their valid moves
+        pos_scope = {
+            square.occupying_piece: [move.pos for move in square.occupying_piece.get_moves(self)] 
+            for square in self.squares 
+            if square.occupying_piece is not None and len(square.occupying_piece.get_moves(self)) > 0
+            }
+        possible_attackers = []
+
+        # Find which pieces can attack target
+        for piece, scope in pos_scope.items():
+            try:
+                if scope.index(target) >= 0:
+                    possible_attackers.append(piece)
+            except ValueError:
+                pass
+
+        return possible_attackers # possible_attackers = [Piece(), Piece()]
+
     def is_in_check(self, color, board_change=None): # board_change = [(x1, y1), (x2, y2)]
         output = False
         king_pos = None
