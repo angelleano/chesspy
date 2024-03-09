@@ -125,6 +125,8 @@ class Board:
             if piece.color != color:
                 for square in piece.attacking_squares(self):
                     if square.pos == king_pos:
+                        # DELETE THIS PRINT FOR PROD
+                        print(f"Color is: {color}\nAttacking Piece is: {piece.pos}")
                         output = True
         if board_change is not None:
             old_square.occupying_piece = changing_piece
@@ -139,6 +141,9 @@ class Board:
                     king = piece
         if king.get_valid_moves(self) == []:
             if self.is_in_check(color):
+                # CHECK IF CHECKING PIECE IS ONLY 1, THEN IF IT CAN
+                # BE CAPTURED,THEN IF CHECKING PIECE IS ROOK, QUEEN 
+                # OR BISHOP CAN IT BE BLOCKED
                 output = True
         return output
     
