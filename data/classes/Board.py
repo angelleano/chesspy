@@ -215,6 +215,15 @@ class Board:
                     output = True
         return output
     
+    def can_move(self, color):
+        for square in self.squares:
+            piece = square.occupying_piece
+            if (piece is not None 
+            and piece.color == color
+            and any(move for move in piece.get_valid_moves(self))):
+                return True
+        return False
+    
     def draw(self, display):
         if self.selected_piece is not None:
             self.get_square_from_pos(self.selected_piece.pos).highlight = True
