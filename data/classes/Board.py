@@ -160,10 +160,14 @@ class Board:
                     king = piece
         if king.get_valid_moves(self) == []:
             if self.is_in_check(color):
-                # CHECK IF CHECKING PIECE IS ONLY 1, THEN IF IT CAN
-                # BE CAPTURED,THEN IF CHECKING PIECE IS ROOK, QUEEN 
-                # OR BISHOP CAN IT BE BLOCKED
-                output = True
+                    # CHECK IF PIECE IS ROOK, QUEEN 
+                    # OR BISHOP CAN IT BE BLOCKED
+                aggresors = self.get_agro_agents(king.pos)
+                if len(aggresors) == 1:
+                    if len(self.get_agro_agents(aggresors[0].pos)) > 0:
+                        pass
+                    else:
+                        output = True
         return output
     
     def draw(self, display):
