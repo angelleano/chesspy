@@ -9,7 +9,7 @@ class Pawn(Piece):
         img_path = "data/imgs/" + color[0] + "_pawn.png"
         self.img = pygame.image.load(img_path)
         self.img = pygame.transform.scale(self.img, (board.tile_width - 35, board.tile_height - 35))
-        self.notation = " "
+        self.notation = "P"
 
     def get_possible_moves(self, board):
         output = []
@@ -43,6 +43,7 @@ class Pawn(Piece):
                 output.append(square)
 
         if self.color == "white":
+            # Right diagonal check
             if self.x + 1 < 8 and self.y - 1 >= 0:
                 square = board.get_square_from_pos(
                     (self.x + 1, self.y - 1)
@@ -50,6 +51,7 @@ class Pawn(Piece):
                 if square.occupying_piece != None:
                     if square.occupying_piece.color != self.color:
                         output.append(square)
+            # Left diagonal check
             if self.x - 1 >= 0 and self.y - 1 >= 0:
                 square = board.get_square_from_pos(
                     (self.x - 1, self.y - 1)
@@ -57,7 +59,30 @@ class Pawn(Piece):
                 if square.occupying_piece != None:
                     if square.occupying_piece.color != self.color:
                         output.append(square)
+            # Right en-passant check
+            if self.x + 1 < 8 and self.y - 1 >= 0:
+                square = board.get_square_from_pos(
+                    (self.x + 1, self.y)
+                )
+                step_square = board.get_square_from_pos(
+                    (self.x + 1, self.y - 1)
+                )
+                if square.occupying_piece != None:
+                    if square.occupying_piece.color != self.color and square.occupying_piece == board.bep:
+                        output.append(step_square)
+            # Left en-passant check
+            if self.x - 1 >= 0 and self.y - 1 >= 0:
+                square = board.get_square_from_pos(
+                    (self.x - 1, self.y)
+                )
+                step_square = board.get_square_from_pos(
+                    (self.x - 1, self.y - 1)
+                )
+                if square.occupying_piece != None:
+                    if square.occupying_piece.color != self.color and square.occupying_piece == board.bep:
+                        output.append(step_square)
         elif self.color == "black":
+            # Right diagonal check
             if self.x + 1 < 8 and self.y + 1 < 8:
                 square = board.get_square_from_pos(
                     (self.x + 1, self.y + 1)
@@ -65,6 +90,7 @@ class Pawn(Piece):
                 if square.occupying_piece != None:
                     if square.occupying_piece.color != self.color:
                         output.append(square)
+            # Left diagonal check
             if self.x - 1 >= 0 and self.y + 1 < 8:
                 square = board.get_square_from_pos(
                     (self.x - 1, self.y + 1)
@@ -72,6 +98,28 @@ class Pawn(Piece):
                 if square.occupying_piece != None:
                     if square.occupying_piece.color != self.color:
                         output.append(square)
+            # Right en-passant check
+            if self.x + 1 < 8 and self.y + 1 < 8:
+                square = board.get_square_from_pos(
+                    (self.x + 1, self.y)
+                )
+                step_square = board.get_square_from_pos(
+                    (self.x + 1, self.y + 1)
+                )
+                if square.occupying_piece != None:
+                    if square.occupying_piece.color != self.color and square.occupying_piece == board.wep:
+                        output.append(step_square)
+            # Left en-passant check
+            if self.x - 1 >= 0 and self.y + 1 < 8:
+                square = board.get_square_from_pos(
+                    (self.x - 1, self.y)
+                )
+                step_square = board.get_square_from_pos(
+                    (self.x - 1, self.y + 1)
+                )
+                if square.occupying_piece != None:
+                    if square.occupying_piece.color != self.color and square.occupying_piece == board.wep:
+                        output.append(step_square)
         
         return output
     
