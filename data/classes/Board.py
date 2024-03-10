@@ -48,6 +48,8 @@ class Board:
         self.tile_height = height // 8
         self.selected_piece = None
         self.turn = "white"
+        self.wep = None # White en-passant vulnerable pawn
+        self.bep = None # Black en-passant vulnerable pawn
         self.config = [
             ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
             ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
@@ -118,7 +120,12 @@ class Board:
                 if clicked_square.occupying_piece.color == self.turn:
                     self.selected_piece = clicked_square.occupying_piece
         elif self.selected_piece.move(self, clicked_square):
-            self.turn = "white" if self.turn == "black" else "black"
+            if self.turn == "black":
+                self.wep = None
+                self.turn = "white" 
+            else:
+                self.bep = None
+                self.turn = "black"
         elif clicked_square.occupying_piece is not None:
             if clicked_square.occupying_piece.color == self.turn:
                 self.selected_piece = clicked_square.occupying_piece

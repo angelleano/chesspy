@@ -42,8 +42,9 @@ class Piece:
             board.selected_piece = None
             self.has_moved = True
         
-            # Pawn promotion
-            if self.notation == " ":
+            # Pawn uniques
+            if self.notation == "P":
+                # Pawn promotion
                 if self.y == 0 or self.y == 7:
                     from data.classes.pieces.Queen import Queen
                     square.occupying_piece = Queen(
@@ -51,6 +52,20 @@ class Piece:
                         self.color,
                         board
                     )
+                # Add to vulnerable to en-passant
+                if prev_square.y - self.y == 2:
+                    board.wep = self
+                elif prev_square.y - self.y == -2:
+                    board.bep = self
+                # Take vulnerable en-passant pawn
+                if board.wep != None:
+                    if square.x == board.wep.x and square.y == (board.wep.y + 1):
+                        ep_square = board.get_square_from_pos(board.wep.pos)
+                        ep_square.occupying_piece = None
+                if board.bep != None:
+                    if square.x == board.bep.x and square.y == (board.bep.y - 1):
+                        ep_square = board.get_square_from_pos(board.bep.pos)
+                        ep_square.occupying_piece = None
             
             # Move rook if king castles
             if self.notation == "K":
