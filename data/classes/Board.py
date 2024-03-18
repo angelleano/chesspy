@@ -50,6 +50,9 @@ class Board:
         self.turn = "white"
         self.wep = None # White en-passant vulnerable pawn
         self.bep = None # Black en-passant vulnerable pawn
+        self.promo = False
+        self.promo_pick = None
+        self.promo_piece = None
         self.config = [
             ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
             ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],

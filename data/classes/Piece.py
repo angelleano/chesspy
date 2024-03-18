@@ -46,12 +46,8 @@ class Piece:
             if self.notation == "P":
                 # Pawn promotion
                 if self.y == 0 or self.y == 7:
-                    from data.classes.pieces.Queen import Queen
-                    square.occupying_piece = Queen(
-                        (self.x, self.y),
-                        self.color,
-                        board
-                    )
+                    board.promo = True
+                    board.promo_piece = self
                 # Add to vulnerable to en-passant
                 if prev_square.y - self.y == 2:
                     board.wep = self
